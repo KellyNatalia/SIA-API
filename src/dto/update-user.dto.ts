@@ -1,4 +1,4 @@
-import * as userEntity from "src/entities/user.entity"
+import * as userEntity from "src/entities/user/user.entity"
 import { IsBoolean, IsNotEmpty } from "class-validator";
 import { CreateUserDTO } from "./create-user.dto";
 

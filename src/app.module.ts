@@ -3,8 +3,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from 'src/modules/users/users.module';  
 import { AuthModule } from './modules/auth/auth.module';
+import { StudentsModule } from './modules/students/students.module';
+import { TeachersController } from './modules/teachers/teachers.controller';
+import { TeachersService } from './modules/teachers/teachers.service';
+import { TeachersModule } from './modules/teachers/teachers.module';
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }),
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -15,12 +21,19 @@ import { AuthModule } from './modules/auth/auth.module';
         username: config.get<string>('DB_USERNAME'),
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
+
         autoLoadEntities: true,
-        synchronize: false,
-      })
+        synchronize: true,
+
+    
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      }),
     }),
+
     UsersModule,
     AuthModule,
+    StudentsModule,
+    TeachersModule,
   ],
 })
 export class AppModule {}

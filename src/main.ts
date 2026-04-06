@@ -11,6 +11,12 @@ async function bootstrap() {
 
   //  Filtro global para excepciones
   app.useGlobalFilters(new AllExceptionsFilter());
+  
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 
   // Cargar el archivo YAML
   const swaggerDocument = YAML.load(join(__dirname, '..', 'docs', 'api.yaml'));
