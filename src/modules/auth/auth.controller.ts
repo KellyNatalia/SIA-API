@@ -37,14 +37,25 @@ export class AuthController {
 
     /**
     * @method getProfile
-    * @description Obtiene el perfil del usuario autenticado mediante JWT.
+    * @description Obtiene el perfil completo del usuario autenticado mediante JWT.
     * @route GET /auth/profile
     * @guard JwtAuthGuard
-    * @returns Información del usuario autenticado.
+    * @returns Información completa del usuario (id, name, email, role, status).
     */
     @UseGuards(JwtAuthGuard)
     @Get('profile')
     getProfile(@Request() req) {
-        return req.user;
+        return this.authService.getProfile(req.user.id);
+    }
+
+    /**
+     * @method seed
+     * @description Crea un usuario admin de prueba (solo para desarrollo/pruebas iniciales).
+     * @route POST /auth/seed
+     * @returns Usuario admin creado.
+     */
+    @Post('seed')
+    async seed() {
+        return this.authService.createAdminUser();
     }
 }

@@ -58,4 +58,78 @@ export class AuthService {
         return { accessToken: token }
 
     }
+
+    /**
+     * @method getProfile
+     * @description Obtiene el perfil completo del usuario desde la base de datos.
+     * @param userId - ID del usuario.
+     * @returns Información completa del usuario (id, name, email, role, status).
+     */
+    async getProfile(userId: number) {
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+
+        if (!user) {
+            throw new UnauthorizedException('Usuario no encontrado');
+        }
+
+        return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            status: user.status
+        };
+    }
+
+    /**
+     * @method createAdminUser
+     * @description Crea un usuario admin de prueba para desarrollo (admin@example.com).
+     * @returns Usuario admin creado.
+     */
+    async createAdminUser() {
+        // Verifica si el admin ya existe
+        const existingAdmin = await this.userRepo.findOne({ 
+            where: { email: 'admin@example.com' } 
+        });
+
+        if (existingAdmin) {
+            return { 
+                message: 'Usuario admin ya existe',
+                user: {
+                    id: existingAdmin.id,
+                    name: existingAdmin.name,
+                    email: existingAdmin.email,
+                    role: existingAdmin.role,
+                    status: existingAdmin.status
+                }
+            };
+        }
+
+        // Crea el usuario admin
+        const hashedPassword = await bcrypt.hash('Admin123', 10);
+        const adminUser = this.userRepo.create({
+            name: 'Administrador',
+            email: 'admin@example.com',
+            password: hashedPassword,
+            role: 'admin',
+            status: true
+        });
+
+        await this.userRepo.save(adminUser);
+
+        return {
+            message: 'Usuario admin creado exitosamente',
+            user: {
+                id: adminUser.id,
+                name: adminUser.name,
+                email: adminUser.email,
+                role: adminUser.role,
+                status: adminUser.status
+            },
+            credentials: {
+                email: 'admin@example.com',
+                password: 'Admin123'
+            }
+        };
+    }
 }
